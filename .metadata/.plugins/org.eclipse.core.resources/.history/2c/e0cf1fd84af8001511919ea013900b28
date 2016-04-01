@@ -35,7 +35,7 @@ public class Client {
 		 clientKey = "8h0oe4n0fc0cjruvkvteps8elu";
 		 address= InetAddress.getLocalHost(); // for local use server ip is client ip								
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null; 
-	while(true){
+	
 		try {	
 			s = new Socket(address, 4445);
 			os = new PrintWriter(s.getOutputStream());
@@ -61,16 +61,29 @@ public class Client {
 			// info
 			System.out.println("Client Address : " + address);
 			System.out.println("Enter Data to echo Server ( Enter QUIT to end):");
-		
 			syncAll();
-			break;
-	
+		/*	line = br.readLine();
+			while (line.compareTo("QUIT") != 0) {
+				if (line.compareTo("sync check") == 0) {			
+					syncCheck();		
+				
+				} else if (line.compareTo("sync all") == 0) {	
+					syncAll();
+				
+				} else if (line.length() > 5 && line.substring(0, 4).compareTo("sync") == 0) {				
+					String fileName = line.substring(line.indexOf(" ") + 1, line.length());
+					
+					syncFile(fileName);
+				} else {
+					
+					System.out.println("Please enter a valid command");
+				}
+				line = br.readLine();
+			}*/
 		} catch (Exception e) {
-			//e.printStackTrace();
-			System.out.println("Yet no server found ");
-		} 
-	}
-	
+			e.printStackTrace();
+			System.out.println("Socket read Error");
+		} finally {
 			is.close();
 			os.close();
 			br.close();
@@ -79,7 +92,7 @@ public class Client {
 			dataSocket.close();
 			s.close();
 			System.out.println("Connection Closed");
-	
+		}
 
 	}
 

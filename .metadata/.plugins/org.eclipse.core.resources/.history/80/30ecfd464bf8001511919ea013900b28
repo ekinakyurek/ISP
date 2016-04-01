@@ -64,10 +64,27 @@ public class Client {
 		
 			syncAll();
 			break;
-	
+		/*	line = br.readLine();
+			while (line.compareTo("QUIT") != 0) {
+				if (line.compareTo("sync check") == 0) {			
+					syncCheck();		
+				
+				} else if (line.compareTo("sync all") == 0) {	
+					syncAll();
+				
+				} else if (line.length() > 5 && line.substring(0, 4).compareTo("sync") == 0) {				
+					String fileName = line.substring(line.indexOf(" ") + 1, line.length());
+					
+					syncFile(fileName);
+				} else {
+					
+					System.out.println("Please enter a valid command");
+				}
+				line = br.readLine();
+			}*/
 		} catch (Exception e) {
-			//e.printStackTrace();
-			System.out.println("Yet no server found ");
+			e.printStackTrace();
+			System.out.println("Socket read Error");
 		} 
 	}
 	
