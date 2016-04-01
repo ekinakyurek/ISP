@@ -29,7 +29,7 @@ public class Client {
 	private static BufferedOutputStream out;
 	private static int dataPortNumber; // port number for data socket
 	public static String clientKey ;
-	public static String base = "./Local/";
+	
 	
 	public static void main(String args[]) throws Exception {
 		 clientKey = "8h0oe4n0fc0cjruvkvteps8elu";
@@ -208,7 +208,7 @@ public class Client {
 					getFile(fileName).delete();
 					System.out.println(fileName + " deleted");
 				} else if (operation.compareTo("add") == 0) {
-					File thisfile = new File(base + fileName);
+					File thisfile = new File("./Local/" + fileName);
 
 					FileOutputStream inFile = new FileOutputStream(thisfile);
 					byte[] bytes = new byte[8096];
@@ -256,13 +256,13 @@ public class Client {
 	}
 
 	public static File getFile(String filename) {
-		File file = new File(base + filename);
+		File file = new File("./Local/" + filename);
 		return file;
 	}
 
 	public static String getHash(String filename) throws Exception {
 
-		String path = base + filename;
+		String path = "./Local/" + filename;
 		String digest = "";
 		try {
 			digest = checkSum(path);
@@ -281,13 +281,13 @@ public class Client {
 		String path = "";
 		String digest = "";
 		for (int i = 0; i < listOfFiles.length; i++) {
-			path = base + listOfFiles[i].getName();
+			path = "./Local/" + listOfFiles[i].getName();
 			try {
 				digest = checkSum(path);
 				/*
 				 * MessageDigest md = MessageDigest.getInstance("SHA1");
 				 * FileInputStream is = new
-				 * FileInputStream(base+listOfFiles[i].getName());
+				 * FileInputStream("./Local/"+listOfFiles[i].getName());
 				 * DigestInputStream dis = new DigestInputStream(is, md);
 				 * is.close(); dis.close(); digest= md.digest().toString();
 				 */
