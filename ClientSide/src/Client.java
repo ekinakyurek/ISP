@@ -26,19 +26,25 @@ public class Client {
 	private static Socket dataSocket; // new socket for files
 	
 	private static int dataPortNumber; // port number for data socket
-	
+	public static String clientKey ;
 	public static void main(String args[]) throws Exception {
-		 
-		// initialization of variables
+		 clientKey = "8h0oe4n0fc0cjruvkvteps8elu";
 		 address= InetAddress.getLocalHost(); // for local use server ip is client ip								
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null; 
-		// connecting server socket
+	
 		try {	
-			s = new Socket(address, 4445); // You can use static final constant
+			s = new Socket(address, 4445);
+			os = new PrintWriter(s.getOutputStream());
+			//Handshake
+		    os.println("ImClient");
+			os.flush();
+			os.println(clientKey);
+			os.flush();
+			// You can use static final constant
 			br = new BufferedReader(new InputStreamReader(System.in));
 			is = new BufferedReader(new InputStreamReader(s.getInputStream()));
-			os = new PrintWriter(s.getOutputStream());
-
+		
+         
 			// for open datasocket get new port number from server
 			String number = is.readLine();
 			dataPortNumber = Integer.parseInt(number);
