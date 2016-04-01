@@ -22,40 +22,53 @@ public class Drone {
 	
 	public static ArrayList<String> accessKeys;
 	public static ArrayList<String> secretKeys;
-	public static String base = "./Storage/";
-	public static void readKeysAndCreateFolders() throws IOException{
+	
+	public static void readKeys() throws IOException{
 		File keyfile = new File("./ServerKeys.txt");
 		Scanner sc = new Scanner(keyfile);
-	    while (sc.hasNextLine()) {
-	            accessKeys.add(sc.next());        
+
+	     while (sc.hasNextLine()) {
+	            accessKeys.add(sc.next());
+	            secretKeys.add(sc.next());
+	          //System.out.println(secretKeys);
 	    }
 	    sc.close();
-	    for(int i = 0 ; i < accessKeys.size(); i++){
-	    	 File theDir = new File(base + accessKeys.get(i));
-	    	 if (!theDir.exists()){  // Checks that Directory/Folder Doesn't Exists!  
-		         boolean result = theDir.mkdir();    
-		         if(result){  
-		        	System.out.println("FolderCreated"); 
-		         }
-		      }  
-
-	    }
+		
+		/*for(int i = 0; i<10 ; i++){
+			SecureRandom random = new SecureRandom();
+			System.out.println(new BigInteger(80, random).toString(32));
+		}*/
 	    
-	     // Defining Directory/Folder Name  
-
 	}
 	
+	public static void createFolders() throws IOException{
+		for(int i = 0 ; i < accessKeys.size() ; i ++) {
+		File theDir = new File("./Storage/" +  accessKeys.get(i));  // Defining Directory/Folder Name  
+		try{   
+		    if (!theDir.exists()){  // Checks that Directory/Folder Doesn't Exists!  
+		     boolean result = theDir.mkdir();    
+		     	if(result){  
+		     		System.out.println("Folder created");
+		     	}  
+		    }  
+		}catch(Exception e){  
+		   e.printStackTrace();
+		} 
+		}
+	}
 	
 	public static void main(String args[]) {
 		
 		accessKeys = new ArrayList<String>();
+		secretKeys = new ArrayList<String>();
 		Socket s = null;
 		ServerSocket ss = null;
 		System.out.println("Server Listening......");
 	
 		try {
-			readKeysAndCreateFolders();
-			ss = new ServerSocket(4445); // can also use static final PORT_NUM	when define
+			readKeys();
+			createFolders();
+			ss = new ServerSocket(5901); // can also use static final PORT_NUM	when define
 			int clientId = 1; 
 			while (true) {
 				try {
@@ -119,7 +132,7 @@ class ServerThread extends Thread {
 			mapInputStream = new ObjectInputStream(dataPort.getInputStream());
 			out = new BufferedOutputStream(dataPort.getOutputStream(), 8096);
 			
-			System.out.println("Data connection established for client: " + clientKey);
+			System.out.println("Data connection established for client: " + clientId);
 			
 			
 			line = is.readLine();

@@ -22,7 +22,7 @@ public class Drone {
 	
 	public static ArrayList<String> accessKeys;
 	public static ArrayList<String> secretKeys;
-	public static String base = "./Storage/";
+	
 	public static void readKeysAndCreateFolders() throws IOException{
 		File keyfile = new File("./ServerKeys.txt");
 		Scanner sc = new Scanner(keyfile);
@@ -55,7 +55,7 @@ public class Drone {
 	
 		try {
 			readKeysAndCreateFolders();
-			ss = new ServerSocket(4445); // can also use static final PORT_NUM	when define
+			ss = new ServerSocket(5901); // can also use static final PORT_NUM	when define
 			int clientId = 1; 
 			while (true) {
 				try {
@@ -119,7 +119,7 @@ class ServerThread extends Thread {
 			mapInputStream = new ObjectInputStream(dataPort.getInputStream());
 			out = new BufferedOutputStream(dataPort.getOutputStream(), 8096);
 			
-			System.out.println("Data connection established for client: " + clientKey);
+			System.out.println("Data connection established for client: " + clientId);
 			
 			
 			line = is.readLine();
