@@ -34,16 +34,24 @@ public class DroneForServer{
 	private static ObjectOutputStream mapOutputStream;  // outputs stream for hash files, when comparing files status 
 	private static 	BufferedInputStream in2;  // input stream for files
 	private static Socket dataSocket; // new socket for files
-	
+	private static BufferedOutputStream out;
 	private static int dataPortNumber; // port number for data socket
+	
+	public static ArrayList<String> accessKeys;
+	public static String base = "./Storage/";
+	public static String clientBase;
 	
 	public static void main(String args[]) throws Exception {
 		 
 		// initialization of variables
 		 address= InetAddress.getLocalHost(); // for local use server ip is client ip								
-		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null; 
+		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null;
+		 out = null;
+		 accessKeys =new ArrayList<String>();
 		// connecting server socket
 		try {	
+			
+			readKeysAndCreateFolders();
 			s = new Socket(address, 4445);
 			os = new PrintWriter(s.getOutputStream());
 		    os.println("ImDrone");
@@ -56,17 +64,20 @@ public class DroneForServer{
 			// for open datasocket get new port number from server
 			String number = is.readLine();
 			dataPortNumber = Integer.parseInt(number);
-
+		
 			// connection data socket
 			dataSocket = new Socket(address, dataPortNumber);
 			mapOutputStream = new ObjectOutputStream(dataSocket.getOutputStream());
 			in2 = new BufferedInputStream(dataSocket.getInputStream(), 8096);
-
+			out = new BufferedOutputStream(dataSocket.getOutputStream(),8096);
 			// info
 			System.out.println("Client Address : " + address);
 			System.out.println("Enter Data to echo Server ( Enter QUIT to end):");
-
-			syncAll();
+			for(int i = 0; i < accessKeys.size() ; i++){
+				clientBase = base + accessKeys.get(i)+"/";
+				syncAll(accessKeys.get(i)+"/");
+			}
+		
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,9 +92,32 @@ public class DroneForServer{
 			s.close();
 			System.out.println("Connection Closed");
 		}
+		
+		
 
 	}
 
+	public static void readKeysAndCreateFolders() throws IOException{
+		File keyfile = new File("./ServerKeys.txt");
+		Scanner sc = new Scanner(keyfile);
+	    while (sc.hasNextLine()) {
+	            accessKeys.add(sc.next());        
+	    }
+	    sc.close();
+	    for(int i = 0 ; i < accessKeys.size(); i++){
+	    	 File theDir = new File(base + accessKeys.get(i));
+	    	 if (!theDir.exists()){  // Checks that Directory/Folder Doesn't Exists!  
+		         boolean result = theDir.mkdir();    
+		         if(result){  
+		        	System.out.println("FolderCreated"); 
+		         }
+		      }  
+
+	    }
+	    
+	     // Defining Directory/Folder Name  
+
+	}
 
 	public static void syncFile(String fileName)
 			throws Exception {
@@ -139,14 +173,15 @@ public class DroneForServer{
 
 	}
 
-
-	public static void syncAll() throws Exception {
+	public static void syncAll(String clientbase) throws Exception {
 		String line = "";
 
 		String fileName = "";
 		String operation = "";
 		long fileSize = 0;
 		os.println("sync all");
+		os.flush();
+		os.println(clientbase);
 		os.flush();
 		System.out.println("sync starting");
 		mapOutputStream.writeObject(hashAllFiles());
@@ -178,7 +213,7 @@ public class DroneForServer{
 					getFile(fileName).delete();
 					System.out.println(fileName + " deleted");
 				} else if (operation.compareTo("add") == 0) {
-					File thisfile = new File("./Local/" + fileName);
+					File thisfile = new File(clientBase + fileName);
 
 					FileOutputStream inFile = new FileOutputStream(thisfile);
 					byte[] bytes = new byte[8096];
@@ -210,10 +245,9 @@ public class DroneForServer{
 		System.out.println("The total size of updates is " + line);
 		System.out.println("Syncing finished");
 	}
-
 	public static boolean isFileExists(String filename) {
 
-		File folder = new File("./Local");
+		File folder = new File(clientBase);
 		File[] listOfFiles = folder.listFiles();
 		boolean isFileExists = false;
 		for (int i = 0; i < listOfFiles.length; i++) {
@@ -225,28 +259,10 @@ public class DroneForServer{
 		return isFileExists;
 	}
 
-
-	public static void readKeys() throws IOException{
-		File keyfile = new File("./Keys");
-		Scanner sc = new Scanner(keyfile);
-
-	     while (sc.hasNextLine()) {
-	            accessKeys.add(sc.next());
-	            secretKeys.add(sc.next());
-	          //System.out.println(secretKeys);
-	    }
-	    sc.close();
-		
-		/*for(int i = 0; i<10 ; i++){
-			SecureRandom random = new SecureRandom();
-			System.out.println(new BigInteger(80, random).toString(32));
-		}*/
-	    
-	}
 	
 	public static void createFolders() throws IOException{
 		for(int i = 0 ; i < accessKeys.size() ; i ++) {
-		File theDir = new File("./Storage/" +  accessKeys.get(i));  // Defining Directory/Folder Name  
+		File theDir = new File(base +  accessKeys.get(i));  // Defining Directory/Folder Name  
 		try{   
 		    if (!theDir.exists()){  // Checks that Directory/Folder Doesn't Exists!  
 		     boolean result = theDir.mkdir();    
@@ -263,7 +279,7 @@ public class DroneForServer{
 	
 
 
-	private boolean sendFile(File thisFile) throws IOException, ClassNotFoundException {
+	private static boolean sendFile(File thisFile) throws IOException, ClassNotFoundException {
 		
 		FileInputStream in = new FileInputStream(thisFile);
 		byte[] bytes = new byte[8096];
@@ -287,7 +303,7 @@ public class DroneForServer{
 
 	public static String getHash(String filename) throws Exception {
 
-		String path = base + "/" + filename;
+		String path = clientBase + filename;
 		String digest = "";
 		try {
 			digest = checkSum(path);
@@ -300,8 +316,8 @@ public class DroneForServer{
 	}
 
 	
-	public File getFile(String filename) {
-		File file = new File(base+ "/" + filename);
+	public static File getFile(String filename) {
+		File file = new File(clientBase + filename);
 		return file;
 	}
 	
@@ -323,20 +339,20 @@ public class DroneForServer{
 	
 
 	public static HashMap<String, String> hashAllFiles() throws Exception {
-		File folder = new File(base);
+		File folder = new File(clientBase);
 		File[] listOfFiles = folder.listFiles();
 		HashMap<String, String> ServerFiles = new HashMap<String,String>();
 		String path = "";
 		String digest = "";
 		for (int i = 0; i < listOfFiles.length; i++) {
-			path = base + "/" + listOfFiles[i].getName();			
+			path = clientBase + listOfFiles[i].getName();			
 			digest = checkSum(path);
 			ServerFiles.put(listOfFiles[i].getName(), digest);
 		}
 		return ServerFiles;
 	}
 	public static HashMap<String,Long> lastEdits() throws Exception {
-		File folder = new File(base);
+		File folder = new File(clientBase);
 		File[] listOfFiles = folder.listFiles();
 		HashMap<String, Long>filesLastEdits = new HashMap<String,Long>();
 		for (int i = 0; i < listOfFiles.length; i++) {

@@ -1,8 +1,10 @@
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -24,9 +26,11 @@ public class Client {
 	private static ObjectOutputStream mapOutputStream;  // outputs stream for hash files, when comparing files status 
 	private static 	BufferedInputStream in2;  // input stream for files
 	private static Socket dataSocket; // new socket for files
-	
+	private static BufferedOutputStream out;
 	private static int dataPortNumber; // port number for data socket
 	public static String clientKey ;
+	
+	
 	public static void main(String args[]) throws Exception {
 		 clientKey = "8h0oe4n0fc0cjruvkvteps8elu";
 		 address= InetAddress.getLocalHost(); // for local use server ip is client ip								
@@ -145,7 +149,20 @@ public class Client {
 		}
 
 	}
-
+	private boolean downloadAFile (File output,long fileSize) throws IOException{
+		FileOutputStream inFile = new FileOutputStream(output);
+		byte[] bytes = new byte[8096];
+		int count;
+		while (fileSize > 0 && (count = in2.read(bytes)) > 0) {
+			inFile.write(bytes, 0, count);
+			fileSize -= count;
+			inFile.flush();
+		}
+		inFile.close();
+		os.println("done");
+		os.flush();
+		return true;
+	}
 	public static void syncCheck()
 			throws Exception {
 		String line = "";

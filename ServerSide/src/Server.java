@@ -44,7 +44,7 @@ public class Server {
 						}else{
 							
 						}
-					}else if(clientorDrone.compareTo("ImDrone") == 0){
+					}else{
 						DroneThread dt = new DroneThread(s, clientId,is);
 						dt.start();	
 					}
@@ -104,7 +104,7 @@ public class Server {
 class DroneThread extends Thread {
 	
 	int clientId = 1; ServerSocket dataStream = null; String line = null; BufferedReader is = null; PrintWriter os = null; Socket s = null; ObjectInputStream mapInputStream = null; BufferedOutputStream out = null; Socket dataPort = null;
-
+	static String clientBase = "";
 	public DroneThread(Socket s, int clientId, BufferedReader Is)
 	{
 		this.s = s;
@@ -138,7 +138,9 @@ class DroneThread extends Thread {
 					syncCheck();
 
 				} else if (line.compareTo("sync all") == 0) {
-
+					clientBase = is.readLine();
+					clientBase = Server.base + clientBase;
+					System.out.println(clientBase+"base");
 					syncAll();
 
 				} else if (line.substring(0, 4).compareTo("sync") == 0) {
@@ -201,7 +203,7 @@ class DroneThread extends Thread {
 
 	private void syncFile(String filename) throws Exception {
 
-		File folder = new File("./Storage");
+		File folder = new File(clientBase);
 		File[] listOfFiles = folder.listFiles();
 		File ourFile = null;
 		boolean isFileExists = false;
@@ -264,7 +266,7 @@ class DroneThread extends Thread {
 
 	public static String getHash(String filename) throws Exception {
 
-		String path = "./Storage/" + filename;
+		String path = clientBase + filename;
 		String digest = "";
 		try {
 			digest = checkSum(path);
@@ -277,6 +279,7 @@ class DroneThread extends Thread {
 	}
 
 	private void syncAll() throws Exception {
+		
 		final Map<String, String> yourMap = (Map) mapInputStream.readObject();
 		// System.out.println(yourMap.get("Presentation1.pptx"));
 		HashMap<String, String> serverFiles = hashAllFiles();
@@ -352,7 +355,7 @@ class DroneThread extends Thread {
 	}
 
 	public File getFile(String filename) {
-		File file = new File("./Storage/" + filename);
+		File file = new File(clientBase + filename);
 		return file;
 	}
 
@@ -408,23 +411,17 @@ class DroneThread extends Thread {
 	}
 
 	public static HashMap<String, String> hashAllFiles() throws Exception {
-		File folder = new File("./Storage");
+		File folder = new File(clientBase);
 		File[] listOfFiles = folder.listFiles();
 		HashMap ServerFiles = new HashMap<String, byte[]>();
 		String path = "";
 		String digest = "";
 		for (int i = 0; i < listOfFiles.length; i++) {
-			path = "./Storage/" + listOfFiles[i].getName();
+			path = clientBase + listOfFiles[i].getName();
 
 			try {
 				digest = checkSum(path);
-				// MessageDigest md = MessageDigest.getInstance("SHA1");
-				// FileInputStream is = new
-				// FileInputStream("./Storage/"+listOfFiles[i].getName());
-				// DigestInputStream dis = new DigestInputStream(is, md);
-				// is.close();
-				// dis.close();
-				// digest= md.digest().toString();
+				
 			} catch (Exception e) {
 				System.out.println("Error");
 			}
