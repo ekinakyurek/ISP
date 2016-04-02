@@ -29,7 +29,7 @@ public class Client {
 	private static BufferedOutputStream out;
 	private static int dataPortNumber; // port number for data socket
 	public static String clientKey ;
-	public static String base = "./Local/";
+	public static String base = "../Local/";
 	
 	public static void main(String args[]) throws Exception {
 		 clientKey = "8h0oe4n0fc0cjruvkvteps8elu";
@@ -243,7 +243,7 @@ public class Client {
 
 	public static boolean isFileExists(String filename) {
 
-		File folder = new File("./Local");
+		File folder = new File("../Local");
 		File[] listOfFiles = folder.listFiles();
 		boolean isFileExists = false;
 		for (int i = 0; i < listOfFiles.length; i++) {
@@ -275,7 +275,7 @@ public class Client {
 	}
 
 	public static HashMap<String, String> hashAllFiles() throws Exception {
-		File folder = new File("./Local");
+		File folder = new File("../Local");
 		File[] listOfFiles = folder.listFiles();
 		HashMap ClientFiles = new HashMap<String, byte[]>();
 		String path = "";
