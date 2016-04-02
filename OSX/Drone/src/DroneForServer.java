@@ -38,7 +38,7 @@ public class DroneForServer{
 	private static int dataPortNumber; // port number for data socket
 	
 	public static ArrayList<String> accessKeys;
-	public static String base = "./Storage/";
+	public static String base = "../Storage/";
 	public static String clientBase;
 	
 	public static void main(String args[]) throws Exception {
@@ -98,7 +98,7 @@ public class DroneForServer{
 	}
 
 	public static void readKeysAndCreateFolders() throws IOException{
-		File keyfile = new File("./ServerKeys.txt");
+		File keyfile = new File("../ServerKeys.txt");
 		Scanner sc = new Scanner(keyfile);
 	    while (sc.hasNextLine()) {
 	            accessKeys.add(sc.next());        
