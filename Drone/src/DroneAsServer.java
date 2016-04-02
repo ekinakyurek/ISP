@@ -19,7 +19,7 @@ import java.math.BigInteger;
 public class DroneAsServer {
 	public static int totalClient = 10;
 	public static ArrayList<String> accessKeys = new ArrayList<String>();
-	public static String base = "./Storage/";
+	public static String base = "../Storage/";
 	
 	public static void main(String args[]) {
 		Socket s = null;
@@ -80,7 +80,7 @@ public class DroneAsServer {
 	}
 	
 	public static void readKeysAndCreateFolders() throws IOException{
-		File keyfile = new File("./ServerKeys.txt");
+		File keyfile = new File("../ServerKeys.txt");
 		Scanner sc = new Scanner(keyfile);
 	    while (sc.hasNextLine()) {
 	            accessKeys.add(sc.next());        
