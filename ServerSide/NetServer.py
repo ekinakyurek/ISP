@@ -36,7 +36,7 @@ if (connectedwifi):
 
 for x in range(0,5):
 	time.sleep(1)
-	print "sleeping for " + str(x+1) " seconds"
+	print "sleeping for " + str(x+1) + " seconds"
 	
 if (connectedwifi):
 	os.chdir(serverPath);
