@@ -57,7 +57,7 @@ while(not foundServer):
 
 print "Connecting to " + serverSSID
 wireless = Wireless()
-while(!connectedServer):
+while(not connectedServer):
 	if wireless.connect(ssid=serverSSID, password=serverPass):
 		print "Connected to " + serverSSID
 		connectedServer = True
