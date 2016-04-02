@@ -9,7 +9,7 @@ connectedwifi = False #set it to false when need to download files from web
 networkname = "Base"
 passnetwork = "12345678"
 
-serverPath = '/src/'
+serverPath = 'src/'
 
 print "Scanning network area .."
 while(not foundwifi):
