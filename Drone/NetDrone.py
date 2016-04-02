@@ -14,7 +14,7 @@ clientPass = "12345678"
 serverSSID = "Base"
 serverPass = "12345678"
 
-clientPath = '/src/'
+clientPath = 'src/'
 
 #go to the client to get requests
 print "Scanning network area to connect Client to get requests"
