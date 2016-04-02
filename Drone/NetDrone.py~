@@ -99,7 +99,7 @@ while(not foundClient):
 
 print "Connecting to " + clientSSID
 wireless = Wireless()
-while(!connectedClient):
+while(not connectedClient):
 	if wireless.connect(ssid=clientSSID, password=clientPass):
 		print "Connected to " + clientSSID
 		connectedClient = True
@@ -109,5 +109,5 @@ while(!connectedClient):
 
 if (connectedClient):
 	os.chdir(clientPath);
-	os.system("javac Drone.java"); #drone's class
-	os.system("java Drone");
+	os.system("javac DroneAsServer.java"); #drone's class
+	os.system("java DroneAsServer");

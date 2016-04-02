@@ -28,7 +28,7 @@ while(not foundClient):
 
 print "Connecting to " + clientSSID
 wireless = Wireless()
-while(!connectedClient):
+while(not connectedClient):
 	if wireless.connect(ssid=clientSSID, password=clientPass):
 		print "Connected to " + clientSSID
 		connectedClient = True
@@ -99,7 +99,7 @@ while(not foundClient):
 
 print "Connecting to " + clientSSID
 wireless = Wireless()
-while(!connectedClient):
+while(not connectedClient):
 	if wireless.connect(ssid=clientSSID, password=clientPass):
 		print "Connected to " + clientSSID
 		connectedClient = True

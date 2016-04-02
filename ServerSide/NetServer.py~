@@ -22,7 +22,7 @@ while(not foundwifi):
 
 print "Connecting to " + networkname
 wireless = Wireless()
-while(!connectedClient):
+while(not connectedClient):
 	if wireless.connect(ssid=networkname, password=passnetwork):
 		print "Connected to " + networkname
 		connectedwifi = True
@@ -39,6 +39,6 @@ for x in range(0,5):
 	print "sleeping for " + str(x+1) " seconds"
 	
 if (connectedwifi):
-	os.chdir(clientPath);
+	os.chdir(serverPath);
 	os.system("java Server");
 

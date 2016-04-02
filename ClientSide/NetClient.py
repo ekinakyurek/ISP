@@ -22,7 +22,7 @@ while(not foundwifi):
 
 print "Connecting to " + networkname
 wireless = Wireless()
-while(!connectedClient):
+while(not connectedClient):
 	if wireless.connect(ssid=networkname, password=passnetwork):
 		print "Connected to " + networkname
 		connectedClient = True
