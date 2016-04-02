@@ -44,7 +44,7 @@ public class DroneForServer{
 	public static void main(String args[]) throws Exception {
 		 
 		// initialization of variables
-		 address= InetAddress.getLocalHost(); // for local use server ip is client ip								
+		 address= InetAddress.getByName("172.20.10.3"); // for local use server ip is client ip								
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null;
 		 out = null;
 		 accessKeys =new ArrayList<String>();

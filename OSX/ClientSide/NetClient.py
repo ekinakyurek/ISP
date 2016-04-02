@@ -9,7 +9,7 @@ connectedwifi = False #set it to false when need to download files from web
 networkname = "Field"
 passnetwork = "12345678"
 
-clientPath = 'src/'
+clientPath = '/src/'
 
 print "Scanning network area .."
 while(not foundwifi):
@@ -34,7 +34,7 @@ if (connectedwifi):
 	os.system("javac Client.java");
 	os.system("java Client");
 
-for x in range(0,5):
+for x in range(0,30):
 	time.sleep(1)
 	print "sleeping for " + str(x+1) + " seconds"
 	

@@ -11,10 +11,10 @@ foundServer = False
 
 clientSSID = "Field"
 clientPass = "12345678"
-serverSSID = "Acil"
+serverSSID = "Base"
 serverPass = "12345678"
 
-clientPath = "/home/pi/Desktop/ISP/OSX/Drone/src/" 
+clientPath = 'src/'
 
 #go to the client to get requests
 print "Scanning network area to connect Client to get requests"
@@ -66,7 +66,7 @@ while(not connectedServer):
 
 if (connectedServer):
 	sitesList = []
-	f = open('/home/pi/Desktop/ISP/OSX/Drone/sites.in','r')
+	f = open('sites.in','r')
 	site = f.readline()
 	while(site != ""):
 		sitesList.append(site)
@@ -80,9 +80,9 @@ if (connectedServer):
 		if (len(link) > 5):
 			comm = "wkhtmltopdf " + link + " Page"+ str(x+1)+".pdf"
 			os.system(comm)
-	os.chdir(clientPath);
-	os.system("javac DroneForServer.java"); #drone's class
-	os.system("java DroneForServer");
+		os.chdir(clientPath);
+		os.system("javac DroneForServer.java"); #drone's class
+		os.system("java DroneForServer");
 
 connectedServer = False
 foundServer = False
@@ -111,3 +111,14 @@ if (connectedClient):
 	os.chdir(clientPath);
 	os.system("javac DroneAsServer.java"); #drone's class
 	os.system("java DroneAsServer");
+
+print "Connecting to " + serverSSID
+wireless = Wireless()
+while(not connectedServer):
+	if wireless.connect(ssid=serverSSID, password=serverPass):
+		print "Connected to " + serverSSID
+		connectedServer = True
+	else:
+		print "Connection error"
+
+print "Successfully completed."

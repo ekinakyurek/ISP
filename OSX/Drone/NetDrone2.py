@@ -14,7 +14,7 @@ clientPass = "12345678"
 serverSSID = "Acil"
 serverPass = "12345678"
 
-clientPath = "/home/pi/Desktop/ISP/OSX/Drone/src/" 
+clientPath = "/home/pi/Desktop/ISP/OSX/Drone/src/"
 
 #go to the client to get requests
 print "Scanning network area to connect Client to get requests"
@@ -111,3 +111,15 @@ if (connectedClient):
 	os.chdir(clientPath);
 	os.system("javac DroneAsServer.java"); #drone's class
 	os.system("java DroneAsServer");
+
+
+print "Connecting to " + serverSSID
+wireless = Wireless()
+while(not connectedServer):
+	if wireless.connect(ssid=serverSSID, password=serverPass):
+		print "Connected to " + serverSSID
+		connectedServer = True
+	else:
+		print "Connection error"
+
+print "Succesfully completed."

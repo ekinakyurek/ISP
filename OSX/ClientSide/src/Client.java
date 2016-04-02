@@ -331,7 +331,7 @@ public class Client {
 	}
 
 	public static HashMap<String, String> hashAllFiles() throws Exception {
-		File folder = new File("./Local");
+		File folder = new File("../Local");
 		File[] listOfFiles = folder.listFiles();
 		HashMap ClientFiles = new HashMap<String, byte[]>();
 		String path = "";

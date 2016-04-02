@@ -31,7 +31,7 @@ public class DroneAsServer {
 			readKeysAndCreateFolders();
 			ss = new ServerSocket(4445); // can also use static final PORT_NUM	when define
 			int clientId = 1; // it will be client ID
-			while (true) {
+		
 				try {
 					s = ss.accept();
 					System.out.println("Connection established for client: " + clientId);
@@ -43,23 +43,26 @@ public class DroneAsServer {
 						if(accessKeys.contains(clientKey)){
 							DroneServerThread st = new DroneServerThread(s, clientId,is,clientKey);
 							st.start();
+							while(st.isAlive()){
+							
+							}
 						}else{
 							
 						}
 					}else{
 						DroneThread dt = new DroneThread(s, clientId,is);
-						dt.start();	
+						dt.start();
+
 					}
 					clientId = clientId + 1;
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.out.println("Connection Error");
-					break;
 				}
-			}
 			
-			s.close();
-			ss.close();
+			
+		//	s.close();
+		//	ss.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Server error");
