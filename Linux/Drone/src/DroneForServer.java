@@ -44,7 +44,7 @@ public class DroneForServer{
 	public static void main(String args[]) throws Exception {
 		 
 		// initialization of variables
-		 address= InetAddress.getByName("172.20.10.3"); // for local use server ip is client ip								
+		 address= InetAddress.getLocalHost(); // for local use server ip is client ip								
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null;
 		 out = null;
 		 accessKeys =new ArrayList<String>();
@@ -172,27 +172,7 @@ public class DroneForServer{
 		}
 
 	}
-	private static boolean sendFile(File thisFile) throws IOException, ClassNotFoundException {
-		FileInputStream in = new FileInputStream(thisFile);
-		byte[] bytes = new byte[8096];
-		int count;
-		while ((count = in.read(bytes)) > 0) {
-			out.write(bytes, 0, count);
-			out.flush();
-		}
-		// out.close();
-		line = is.readLine();
-		in.close();
 
-		if (line.compareTo("done") == 0) {
-			return true;
-		} else {
-			return false;
-		}
-
-		// System.out.println("Bytes Sent :" + bytecount);
-	}
-	
 	public static void syncAll(String clientbase) throws Exception {
 		String line = "";
 
@@ -201,24 +181,20 @@ public class DroneForServer{
 		long fileSize = 0;
 		os.println("sync all");
 		os.flush();
-	    os.println(clientbase);
-	    os.flush();
+		os.println(clientbase);
+		os.flush();
 		System.out.println("sync starting");
 		mapOutputStream.writeObject(hashAllFiles());
 		mapOutputStream.flush();
-		mapOutputStream.writeObject(lastEdits());
-		mapOutputStream.flush();
-		System.out.println("Im here");
 		line = is.readLine();
 		if (line.compareTo("finished") != 0) {
 			fileName = is.readLine();
 			operation = is.readLine();
-			if (operation.compareTo("delete") != 0 && operation.compareTo("upload")!=0)
+			if (operation.compareTo("delete") != 0)
 				fileSize = Long.valueOf(is.readLine()).longValue();
-			
+
 			while (line.compareTo("finished") != 0) {
 				System.out.println(line);
-				
 				if (operation.compareTo("update") == 0) {
 					FileOutputStream inFile = new FileOutputStream(getFile(fileName));
 					byte[] bytes = new byte[8096];
@@ -232,17 +208,12 @@ public class DroneForServer{
 					os.println("done");
 					os.flush();
 					System.out.println(fileName + " updated");
-				} else if (operation.compareTo("upload")==0){
-					os.println(getFile(fileName).length());
-					os.flush();
-					sendFile(getFile(fileName));
-					System.out.println(fileName + " uploaded to server" + getAsString(getFile(fileName).length()));
-				}else if (operation.compareTo("delete") == 0) {
+				} else if (operation.compareTo("delete") == 0) {
 					getFile(fileName).setWritable(true);
 					getFile(fileName).delete();
 					System.out.println(fileName + " deleted");
 				} else if (operation.compareTo("add") == 0) {
-					File thisfile = new File(base + fileName);
+					File thisfile = new File(clientBase + fileName);
 
 					FileOutputStream inFile = new FileOutputStream(thisfile);
 					byte[] bytes = new byte[8096];
@@ -265,7 +236,7 @@ public class DroneForServer{
 				if (line.compareTo("finished") != 0) {
 					fileName = is.readLine();
 					operation = is.readLine();
-					if (operation.compareTo("delete") != 0 && operation.compareTo("upload")!=0)
+					if (operation.compareTo("delete") != 0)
 						fileSize = Long.valueOf(is.readLine()).longValue();
 				}
 			}
@@ -274,89 +245,6 @@ public class DroneForServer{
 		System.out.println("The total size of updates is " + line);
 		System.out.println("Syncing finished");
 	}
-	
-	public static HashMap<String,Long> lastEdits(){
-		File folder = new File(clientBase);
-		File[] listOfFiles = folder.listFiles();
-		HashMap ClientFiles = new HashMap<String, String>();
-		for (int i = 0; i < listOfFiles.length; i++) {
-			ClientFiles.put(listOfFiles[i].getName(), listOfFiles[i].lastModified());
-		}
-		return ClientFiles;
-	}
-
-//	public static void syncAll(String clientbase) throws Exception {
-//		String line = "";
-//
-//		String fileName = "";
-//		String operation = "";
-//		long fileSize = 0;
-//		os.println("sync all");
-//		os.flush();
-//		os.println(clientbase);
-//		os.flush();
-//		System.out.println("sync starting");
-//		mapOutputStream.writeObject(hashAllFiles());
-//		mapOutputStream.flush();
-//		line = is.readLine();
-//		if (line.compareTo("finished") != 0) {
-//			fileName = is.readLine();
-//			operation = is.readLine();
-//			if (operation.compareTo("delete") != 0)
-//				fileSize = Long.valueOf(is.readLine()).longValue();
-//
-//			while (line.compareTo("finished") != 0) {
-//				System.out.println(line);
-//				if (operation.compareTo("update") == 0) {
-//					FileOutputStream inFile = new FileOutputStream(getFile(fileName));
-//					byte[] bytes = new byte[8096];
-//					int count;
-//					while (fileSize > 0 && (count = in2.read(bytes)) > 0) {
-//						inFile.write(bytes, 0, count);
-//						fileSize -= count;
-//						inFile.flush();
-//					}
-//					inFile.close();
-//					os.println("done");
-//					os.flush();
-//					System.out.println(fileName + " updated");
-//				} else if (operation.compareTo("delete") == 0) {
-//					getFile(fileName).setWritable(true);
-//					getFile(fileName).delete();
-//					System.out.println(fileName + " deleted");
-//				} else if (operation.compareTo("add") == 0) {
-//					File thisfile = new File(clientBase + fileName);
-//
-//					FileOutputStream inFile = new FileOutputStream(thisfile);
-//					byte[] bytes = new byte[8096];
-//					int count;
-//					while (fileSize > 0 && (count = in2.read(bytes)) > 0) {
-//						inFile.write(bytes, 0, count);
-//						fileSize -= count;
-//						inFile.flush();
-//					}
-//					inFile.close();
-//					os.println("done");
-//					os.flush();
-//					System.out.println(fileName + " added");
-//
-//				} else {
-//					System.out.print("Very interesting");
-//				}
-//
-//				line = is.readLine();
-//				if (line.compareTo("finished") != 0) {
-//					fileName = is.readLine();
-//					operation = is.readLine();
-//					if (operation.compareTo("delete") != 0)
-//						fileSize = Long.valueOf(is.readLine()).longValue();
-//				}
-//			}
-//		}
-//		line = is.readLine();
-//		System.out.println("The total size of updates is " + line);
-//		System.out.println("Syncing finished");
-//	}
 	public static boolean isFileExists(String filename) {
 
 		File folder = new File(clientBase);
@@ -391,6 +279,27 @@ public class DroneForServer{
 	
 
 
+	private static boolean sendFile(File thisFile) throws IOException, ClassNotFoundException {
+		
+		FileInputStream in = new FileInputStream(thisFile);
+		byte[] bytes = new byte[8096];
+		int count;
+		while ((count = in.read(bytes)) > 0) {
+			out.write(bytes, 0, count);
+			out.flush();
+		}
+		// out.close();
+		line = is.readLine();
+		in.close();
+
+		if (line.compareTo("done") == 0) {
+			return true;
+		} else {
+			return false;
+		}
+
+		// System.out.println("Bytes Sent :" + bytecount);
+	}
 
 	public static String getHash(String filename) throws Exception {
 
@@ -442,7 +351,15 @@ public class DroneForServer{
 		}
 		return ServerFiles;
 	}
-
+	public static HashMap<String,Long> lastEdits() throws Exception {
+		File folder = new File(clientBase);
+		File[] listOfFiles = folder.listFiles();
+		HashMap<String, Long>filesLastEdits = new HashMap<String,Long>();
+		for (int i = 0; i < listOfFiles.length; i++) {
+			filesLastEdits.put(listOfFiles[i].getName(),listOfFiles[i].lastModified());
+		}
+		return filesLastEdits;
+	}
 
 	public static String checkSum(String path) {
 		String digest = "";
@@ -478,7 +395,7 @@ public class DroneForServer{
 
 	private static final String[] Q = new String[] { "Bytes", "Kb", "Mb", "Gb", "T", "P", "E" };
 
-	public static String getAsString(long bytes) {
+	public String getAsString(long bytes) {
 		for (int i = 6; i >= 0; i--) {
 			double step = Math.pow(1024, i);
 

@@ -57,7 +57,7 @@ public class Client {
 			dataSocket = new Socket(address, dataPortNumber);
 			mapOutputStream = new ObjectOutputStream(dataSocket.getOutputStream());
 			in2 = new BufferedInputStream(dataSocket.getInputStream(), 8096);
-			out = new BufferedOutputStream(dataSocket.getOutputStream(),8096);
+
 			// info
 			System.out.println("Client Address : " + address);
 			System.out.println("Enter Data to echo Server ( Enter QUIT to end):");
@@ -66,7 +66,7 @@ public class Client {
 			break;
 	
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			System.out.println("Yet no server found ");
 		} 
 	}
@@ -181,19 +181,15 @@ public class Client {
 		System.out.println("sync starting");
 		mapOutputStream.writeObject(hashAllFiles());
 		mapOutputStream.flush();
-		mapOutputStream.writeObject(lastEdits());
-		mapOutputStream.flush();
-		
 		line = is.readLine();
 		if (line.compareTo("finished") != 0) {
 			fileName = is.readLine();
 			operation = is.readLine();
-			if (operation.compareTo("delete") != 0 && operation.compareTo("upload")!=0)
+			if (operation.compareTo("delete") != 0)
 				fileSize = Long.valueOf(is.readLine()).longValue();
-			
+
 			while (line.compareTo("finished") != 0) {
 				System.out.println(line);
-				
 				if (operation.compareTo("update") == 0) {
 					FileOutputStream inFile = new FileOutputStream(getFile(fileName));
 					byte[] bytes = new byte[8096];
@@ -207,12 +203,7 @@ public class Client {
 					os.println("done");
 					os.flush();
 					System.out.println(fileName + " updated");
-				} else if (operation.compareTo("upload")==0){
-					os.println(getFile(fileName).length());
-					os.flush();
-					sendFile(getFile(fileName));
-					System.out.println(fileName + " uploaded to server" + getAsString(getFile(fileName).length()));
-				}else if (operation.compareTo("delete") == 0) {
+				} else if (operation.compareTo("delete") == 0) {
 					getFile(fileName).setWritable(true);
 					getFile(fileName).delete();
 					System.out.println(fileName + " deleted");
@@ -240,7 +231,7 @@ public class Client {
 				if (line.compareTo("finished") != 0) {
 					fileName = is.readLine();
 					operation = is.readLine();
-					if (operation.compareTo("delete") != 0 && operation.compareTo("upload")!=0)
+					if (operation.compareTo("delete") != 0)
 						fileSize = Long.valueOf(is.readLine()).longValue();
 				}
 			}
@@ -249,43 +240,6 @@ public class Client {
 		System.out.println("The total size of updates is " + line);
 		System.out.println("Syncing finished");
 	}
-	
-	private static boolean sendFile(File thisFile) throws IOException, ClassNotFoundException {
-		FileInputStream in = new FileInputStream(thisFile);
-		byte[] bytes = new byte[8096];
-		int count;
-		while ((count = in.read(bytes)) > 0) {
-			out.write(bytes, 0, count);
-			out.flush();
-		}
-		// out.close();
-		line = is.readLine();
-		in.close();
-
-		if (line.compareTo("done") == 0) {
-			return true;
-		} else {
-			return false;
-		}
-
-		// System.out.println("Bytes Sent :" + bytecount);
-	}
-	private static final String[] Q = new String[] { "Bytes", "Kb", "Mb", "Gb", "T", "P", "E" };
-
-	public static String getAsString(long bytes) {
-		for (int i = 6; i >= 0; i--) {
-			double step = Math.pow(1024, i);
-
-			if (bytes > step) {
-				return String.format("%3.1f %s", bytes / step, Q[i]);
-
-			}
-
-		}
-
-		return Long.toString(bytes);
-	}
-
 
 	public static boolean isFileExists(String filename) {
 
@@ -318,16 +272,6 @@ public class Client {
 		}
 
 		return digest;
-	}
-	
-	public static HashMap<String,Long> lastEdits(){
-		File folder = new File("../Local");
-		File[] listOfFiles = folder.listFiles();
-		HashMap ClientFiles = new HashMap<String, String>();
-		for (int i = 0; i < listOfFiles.length; i++) {
-			ClientFiles.put(listOfFiles[i].getName(), listOfFiles[i].lastModified());
-		}
-		return ClientFiles;
 	}
 
 	public static HashMap<String, String> hashAllFiles() throws Exception {

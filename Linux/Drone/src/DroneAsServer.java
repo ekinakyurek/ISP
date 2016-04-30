@@ -1,9 +1,7 @@
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -31,7 +29,7 @@ public class DroneAsServer {
 			readKeysAndCreateFolders();
 			ss = new ServerSocket(4445); // can also use static final PORT_NUM	when define
 			int clientId = 1; // it will be client ID
-		
+			while (true) {
 				try {
 					s = ss.accept();
 					System.out.println("Connection established for client: " + clientId);
@@ -43,26 +41,23 @@ public class DroneAsServer {
 						if(accessKeys.contains(clientKey)){
 							DroneServerThread st = new DroneServerThread(s, clientId,is,clientKey);
 							st.start();
-							while(st.isAlive()){
-							
-							}
 						}else{
 							
 						}
 					}else{
 						DroneThread dt = new DroneThread(s, clientId,is);
-						dt.start();
-
+						dt.start();	
 					}
 					clientId = clientId + 1;
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.out.println("Connection Error");
+					break;
 				}
+			}
 			
-			
-		//	s.close();
-		//	ss.close();
+			s.close();
+			ss.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Server error");
@@ -358,7 +353,7 @@ class DroneThread extends Thread {
 		os.flush();
 
 	}
- 
+
 	public File getFile(String filename) {
 		File file = new File(clientBase + filename);
 		return file;
@@ -489,7 +484,7 @@ class DroneThread extends Thread {
 class DroneServerThread extends Thread {
 	
 	int clientId = 1; ServerSocket dataStream = null; String line = null; BufferedReader is = null; PrintWriter os = null; Socket s = null; ObjectInputStream mapInputStream = null; BufferedOutputStream out = null; Socket dataPort = null;
-	String clientKey;static String clientBase; BufferedInputStream in2;
+	String clientKey;static String clientBase;
 	
 	public DroneServerThread(Socket s, int clientId, BufferedReader Is, String KEY)
 	{
@@ -499,7 +494,7 @@ class DroneServerThread extends Thread {
 		this.clientKey = KEY;
 		this.clientBase = DroneAsServer.base + this.clientKey + "/";
 	}
-    
+
 	public void run() {
 
 		try {
@@ -515,7 +510,7 @@ class DroneServerThread extends Thread {
 			dataPort = dataStream.accept();
 			mapInputStream = new ObjectInputStream(dataPort.getInputStream());
 			out = new BufferedOutputStream(dataPort.getOutputStream(), 8096);
-			in2 = new BufferedInputStream(dataPort.getInputStream(),8096);
+			
 			System.out.println("Data connection established for client: " + clientId);
 			
 			line = is.readLine();
@@ -585,21 +580,6 @@ class DroneServerThread extends Thread {
 				System.out.println("Socket Close Error");
 			}
 		} // end finally
-	}
-	
-	private boolean downloadAFile (File output,long fileSize) throws IOException{
-		FileOutputStream inFile = new FileOutputStream(output);
-		byte[] bytes = new byte[8096];
-		int count;
-		while (fileSize > 0 && (count = in2.read(bytes)) > 0) {
-			inFile.write(bytes, 0, count);
-			fileSize -= count;
-			inFile.flush();
-		}
-		inFile.close();
-		os.println("done");
-		os.flush();
-		return true;
 	}
 
 	private void syncFile(String filename) throws Exception {
@@ -680,13 +660,9 @@ class DroneServerThread extends Thread {
 	}
 
 	private void syncAll() throws Exception {
-		@SuppressWarnings("unchecked")
-		final Map<String, String> yourMap = (Map<String,String>) mapInputStream.readObject();
-		@SuppressWarnings("unchecked")
-		final Map<String,Long> lastEdits = (Map<String,Long>) mapInputStream.readObject();
+		final Map<String, String> yourMap = (Map) mapInputStream.readObject();
 		// System.out.println(yourMap.get("Presentation1.pptx"));
 		HashMap<String, String> serverFiles = hashAllFiles();
-		HashMap<String, Long > serverLastEdits = lastEdits();
 		long updateSize = 0;
 		if (yourMap.size() != 0) {
 			for (String key : yourMap.keySet()) {
@@ -694,7 +670,7 @@ class DroneServerThread extends Thread {
 				if (serverFiles.get(key) != null) {
 
 					if (serverFiles.get(key).compareTo(yourMap.get(key)) != 0) {
-					 if(serverLastEdits.get(key) > lastEdits.get(key) ) {
+
 						os.println(key + " update " + getAsString(getFile(key).length()));
 						os.flush();
 						os.println(key);
@@ -705,34 +681,20 @@ class DroneServerThread extends Thread {
 						os.flush();
 						sendFile(getFile(key));
 						updateSize += getFile(key).length();
-					 }else{
-						os.println(key + " uploaded to server"); 
-						os.flush();
-						os.println(key);
-						os.flush();
-						os.println("upload");
-						os.flush();
-						Long size = Long.parseLong(is.readLine());
-						downloadAFile(getFile(key),size);
-						updateSize += size;
-					 }
 					} else {
 
 						// do nothing
 					}
-					serverFiles.remove(key);
 				} else {
-					os.println(key + " upload to server"); 
+					os.println(key + " delete " + getAsString(getFile(key).length()));
 					os.flush();
 					os.println(key);
 					os.flush();
-					os.println("upload");
+					os.println("delete");
 					os.flush();
-					Long size = Long.parseLong(is.readLine());
-					downloadAFile(getFile(key),size);
-					updateSize += size;
+					updateSize += +getFile(key).length();
 				}
-			
+				serverFiles.remove(key);
 			}
 			for (String key : serverFiles.keySet()) {
 				os.println(key + " add " + getAsString(getFile(key).length()));
@@ -772,97 +734,11 @@ class DroneServerThread extends Thread {
 
 	}
 
-//	private void syncAll() throws Exception {
-//		final Map<String, String> yourMap = (Map) mapInputStream.readObject();
-//		final Map<String,Long> ClientlastEdits = (Map<String,Long>) mapInputStream.readObject();
-//		// System.out.println(yourMap.get("Presentation1.pptx"));
-//		HashMap<String, String> serverFiles = hashAllFiles();
-//		HashMap<String, String> serverLastEdits = hashAllFiles();
-//		
-//		long updateSize = 0;
-//		if (yourMap.size() != 0) {
-//			for (String key : yourMap.keySet()) {
-//
-//				if (serverFiles.get(key) != null) {
-//
-//					if (serverFiles.get(key).compareTo(yourMap.get(key)) != 0) {
-//
-//						os.println(key + " update " + getAsString(getFile(key).length()));
-//						os.flush();
-//						os.println(key);
-//						os.flush();
-//						os.println("update");
-//						os.flush();
-//						os.println(getFile(key).length());
-//						os.flush();
-//						sendFile(getFile(key));
-//						updateSize += getFile(key).length();
-//					} else {
-//
-//						// do nothing
-//					}
-//				} else {
-//					os.println(key + " delete " + getAsString(getFile(key).length()));
-//					os.flush();
-//					os.println(key);
-//					os.flush();
-//					os.println("delete");
-//					os.flush();
-//					updateSize += +getFile(key).length();
-//				}
-//				serverFiles.remove(key);
-//			}
-//			for (String key : serverFiles.keySet()) {
-//				os.println(key + " add " + getAsString(getFile(key).length()));
-//				os.flush();
-//				os.println(key);
-//				os.flush();
-//				os.println("add");
-//				os.flush();
-//				os.println(getFile(key).length());
-//				os.flush();
-//				sendFile(getFile(key));
-//				updateSize += +getFile(key).length();
-//			}
-//		} else {
-//			if (serverFiles.size() != 0) {
-//				for (String key : serverFiles.keySet()) {
-//					os.println(key + " add " + getAsString(getFile(key).length()));
-//					os.flush();
-//					os.println(key);
-//					os.flush();
-//					os.println("add");
-//					os.flush();
-//					os.println(getFile(key).length());
-//					os.flush();
-//					sendFile(getFile(key));
-//					updateSize += +getFile(key).length();
-//				}
-//			} else {
-//
-//			}
-//		}
-//		os.println("finished");
-//		os.flush();
-//
-//		os.println(getAsString(updateSize));
-//		os.flush();
-//
-//	}
-
 	public File getFile(String filename) {
 		File file = new File(clientBase + filename);
 		return file;
 	}
-	public static HashMap<String,Long> lastEdits(){
-		File folder = new File(clientBase);
-		File[] listOfFiles = folder.listFiles();
-		HashMap ClientFiles = new HashMap<String, String>();
-		for (int i = 0; i < listOfFiles.length; i++) {
-			ClientFiles.put(listOfFiles[i].getName(), listOfFiles[i].lastModified());
-		}
-		return ClientFiles;
-	}
+
 	private void syncCheck() throws Exception {
 
 		final Map<String, String> yourMap = (Map) mapInputStream.readObject();

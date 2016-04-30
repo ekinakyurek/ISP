@@ -5,6 +5,7 @@
 		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
 		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="/Users/ekin/git/ISP/Mac/ClientSide"/>
 			<item value="/Users/ekin/git/ISP/Drone"/>
 			<item value="/Users/ekin/git/ISP/ServerSide"/>
 			<item value="/Users/ekin/git/ISP/ClientSide"/>
