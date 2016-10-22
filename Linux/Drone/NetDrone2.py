@@ -38,9 +38,11 @@ while(not connectedClient):
 
 
 if (connectedClient):
+
     os.chdir(clientPath);
         #os.system("javac DroneAsServer.java"); #drone's class
         os.system("java DroneAsServer");
+
 
 
 
@@ -67,7 +69,6 @@ while(not connectedServer):
             print "Connection error"
 
 if (connectedServer):
-    ## os.system("javac DroneForServer.java"); #drone's class
     os.system("java DroneForServer");
 
 connectedServer = False
@@ -94,7 +95,6 @@ while(not connectedClient):
 
 
 if (connectedClient):
-	os.system("javac DroneAsServer.java"); #drone's class
 	os.system("java DroneAsServer");
 
 print "Connecting to " + serverSSID
@@ -107,3 +107,4 @@ while(not connectedServer):
 		print "Connection error"
 
 print "Successfully completed."
+
