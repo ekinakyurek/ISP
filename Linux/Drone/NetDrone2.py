@@ -38,7 +38,7 @@ while(not connectedClient):
 
 if (connectedClient):
 	os.chdir(clientPath);
-	os.system("javac DroneAsServer.java"); #drone's class
+	#os.system("javac DroneAsServer.java"); #drone's class
 	os.system("java DroneAsServer");
 
 
@@ -46,6 +46,7 @@ if (connectedClient):
 #go to the server
 connectedClient = False
 foundClient = False
+
 print "Scanning network area to connect Server (Web)"
 while(not foundServer):
 	for i in range (0,len(ssids)):
@@ -65,24 +66,8 @@ while(not connectedServer):
 		print "Connection error"
 
 if (connectedServer):
-	sitesList = []
-	f = open('sites.in','r')
-	site = f.readline()
-	while(site != ""):
-		sitesList.append(site)
-		site = f.readline()
-
-	print("Searching for links..")
-	for x in range(0,len(sitesList)):
-		length = len(sitesList[x])
-		link = sitesList[x][:length-1]
-		print("Visiting Link "+ link)
-		if (len(link) > 5):
-			comm = "wkhtmltopdf " + link + " Page"+ str(x+1)+".pdf"
-			os.system(comm)
-		os.chdir(clientPath);
-		os.system("javac DroneForServer.java"); #drone's class
-		os.system("java DroneForServer");
+   ## os.system("javac DroneForServer.java"); #drone's class
+    os.system("java DroneForServer");
 
 connectedServer = False
 foundServer = False
@@ -108,8 +93,7 @@ while(not connectedClient):
 
 
 if (connectedClient):
-	os.chdir(clientPath);
-	os.system("javac DroneAsServer.java"); #drone's class
+##	os.system("javac DroneAsServer.java"); #drone's class
 	os.system("java DroneAsServer");
 
 print "Connecting to " + serverSSID
@@ -122,3 +106,4 @@ while(not connectedServer):
 		print "Connection error"
 
 print "Successfully completed."
+

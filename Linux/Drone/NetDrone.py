@@ -64,22 +64,22 @@ while(not connectedServer):
 	else:
 		print "Connection error"
 
-if (connectedServer):
-	sitesList = []
-	f = open('sites.in','r')
-	site = f.readline()
-	while(site != ""):
-		sitesList.append(site)
-		site = f.readline()
-
-	print("Searching for links..")
-	for x in range(0,len(sitesList)):
-		length = len(sitesList[x])
-		link = sitesList[x][:length-1]
-		print("Visiting Link "+ link)
-		if (len(link) > 5):
-			comm = "wkhtmltopdf " + link + " Page"+ str(x+1)+".pdf"
-			os.system(comm)
+#if (connectedServer):
+#	sitesList = []
+#	f = open('sites.in','r')
+#	site = f.readline()
+#	while(site != ""):
+#		sitesList.append(site)
+#		site = f.readline()
+#
+#	print("Searching for links..")
+#	for x in range(0,len(sitesList)):
+#		length = len(sitesList[x])
+#		link = sitesList[x][:length-1]
+#		print("Visiting Link "+ link)
+#		if (len(link) > 5):
+#			comm = "wkhtmltopdf " + link + " Page"+ str(x+1)+".pdf"
+#			os.system(comm)
 		os.chdir(clientPath);
 		os.system("javac DroneForServer.java"); #drone's class
 		os.system("java DroneForServer");

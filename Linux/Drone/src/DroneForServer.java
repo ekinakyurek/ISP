@@ -44,11 +44,12 @@ public class DroneForServer{
 	public static void main(String args[]) throws Exception {
 		 
 		// initialization of variables
-		 address= InetAddress.getByName("172.20.10.4"); // for local use server ip is client ip								
+		 address= InetAddress.getByName("172.20.10.2"); // for local use server ip is client ip								
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null;
 		 out = null;
 		 accessKeys =new ArrayList<String>();
 		// connecting server socket
+		while(true){
 		try {	
 			
 			readKeysAndCreateFolders();
@@ -78,11 +79,12 @@ public class DroneForServer{
 				syncAll(accessKeys.get(i)+"/");
 			}
 		
-			
+			break;
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Socket read Error");
-		} finally {
+			//e.printStackTrace();
+			//System.out.println("Socket read Error");
+		} }
+	
 			is.close();
 			os.close();
 			br.close();
@@ -91,7 +93,7 @@ public class DroneForServer{
 			dataSocket.close();
 			s.close();
 			System.out.println("Connection Closed");
-		}
+		
 		
 		
 
