@@ -24,10 +24,12 @@ while(not foundClient):
             print("In the WiFi field of " + clientSSID)
             foundClient = True
             break
-        ssids = [cell.ssid for cell in Cell.all('wlan0')]
+    ssids = [cell.ssid for cell in Cell.all('wlan0')]
 
 print "Connecting to " + clientSSID
+
 wireless = Wireless()
+
 while(not connectedClient):
     if wireless.connect(ssid=clientSSID, password=clientPass):
         print "Connected to " + clientSSID
@@ -36,8 +38,7 @@ while(not connectedClient):
         print "Connection error"
 
 if (connectedClient):
-    os.chdir(clientPath);
-        #os.system("javac DroneAsServer.java"); #drone's class
+        os.chdir(clientPath);
         os.system("java DroneAsServer");
 
 
@@ -54,7 +55,7 @@ while(not foundServer):
             print("In the WiFi field of " + serverSSID)
             foundServer = True
             break
-        ssids = [cell.ssid for cell in Cell.all('wlan0')]
+    ssids = [cell.ssid for cell in Cell.all('wlan0')]
 
 print "Connecting to " + serverSSID
 wireless = Wireless()
@@ -79,7 +80,7 @@ while(not foundClient):
             print("In the WiFi field of " + clientSSID)
             foundClient = True
             break
-        ssids = [cell.ssid for cell in Cell.all('wlan0')]
+    ssids = [cell.ssid for cell in Cell.all('wlan0')]
 
 print "Connecting to " + clientSSID
 wireless = Wireless()
