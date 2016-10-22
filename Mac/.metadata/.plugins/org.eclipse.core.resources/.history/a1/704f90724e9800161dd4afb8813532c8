@@ -84,8 +84,7 @@ public class DroneForServer{
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Socket read Error");
-		} 
-		}
+		} finally {
 			is.close();
 			os.close();
 			br.close();
@@ -94,6 +93,8 @@ public class DroneForServer{
 			dataSocket.close();
 			s.close();
 			System.out.println("Connection Closed");
+		}
+		}
 		
 		
 

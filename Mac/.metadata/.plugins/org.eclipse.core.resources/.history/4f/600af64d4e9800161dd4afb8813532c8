@@ -74,18 +74,17 @@ public class DroneForServer{
 			// info
 			System.out.println("Client Address : " + address);
 			System.out.println("Enter Data to echo Server ( Enter QUIT to end):");
-		
 			for(int i = 0; i < accessKeys.size() ; i++){
 				clientBase = base + accessKeys.get(i)+"/";
 				syncAll(accessKeys.get(i)+"/");
+				break;
 			}
-			break;
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Socket read Error");
-		} 
-		}
+		} finally {
 			is.close();
 			os.close();
 			br.close();
@@ -94,6 +93,8 @@ public class DroneForServer{
 			dataSocket.close();
 			s.close();
 			System.out.println("Connection Closed");
+		}
+		}
 		
 		
 
