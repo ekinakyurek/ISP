@@ -82,8 +82,8 @@ public class DroneForServer{
 			
 				break;
 			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("Socket read Error");
+				//e.printStackTrace();
+				//System.out.println("Socket read Error");
 			} 
 		}
 	

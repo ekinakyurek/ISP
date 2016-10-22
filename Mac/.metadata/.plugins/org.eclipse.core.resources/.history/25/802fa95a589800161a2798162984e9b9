@@ -44,48 +44,46 @@ public class DroneForServer{
 	public static void main(String args[]) throws Exception {
 		 
 		// initialization of variables
-		 address= InetAddress.getByName("172.20.10.2"); // for local use server ip is client ip	
-		 address = InetAddress.getLocalHost();
+		 address= InetAddress.getByName("172.20.10.2"); // for local use server ip is client ip								
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null;
 		 out = null;
 		 accessKeys =new ArrayList<String>();
 		// connecting server socket
 		while(true){
-			try {	
-				
-				readKeysAndCreateFolders();
-				s = new Socket(address, 4445);
-				os = new PrintWriter(s.getOutputStream());
-			    os.println("ImDrone");
-				os.flush();
-				// You can use static final constant
-				br = new BufferedReader(new InputStreamReader(System.in));
-				is = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		try {	
 			
-	         
-				// for open datasocket get new port number from server
-				String number = is.readLine();
-				dataPortNumber = Integer.parseInt(number);
-			
-				// connection data socket
-				dataSocket = new Socket(address, dataPortNumber);
-				mapOutputStream = new ObjectOutputStream(dataSocket.getOutputStream());
-				in2 = new BufferedInputStream(dataSocket.getInputStream(), 8096);
-				out = new BufferedOutputStream(dataSocket.getOutputStream(),8096);
-				// info
-				System.out.println("Client Address : " + address);
-				System.out.println("Enter Data to echo Server ( Enter QUIT to end):");
-				for(int i = 0; i < accessKeys.size() ; i++){
-					clientBase = base + accessKeys.get(i)+"/";
-					syncAll(accessKeys.get(i)+"/");
-				}
-			
-				break;
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("Socket read Error");
-			} 
-		}
+			readKeysAndCreateFolders();
+			s = new Socket(address, 4445);
+			os = new PrintWriter(s.getOutputStream());
+		    os.println("ImDrone");
+			os.flush();
+			// You can use static final constant
+			br = new BufferedReader(new InputStreamReader(System.in));
+			is = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		
+         
+			// for open datasocket get new port number from server
+			String number = is.readLine();
+			dataPortNumber = Integer.parseInt(number);
+		
+			// connection data socket
+			dataSocket = new Socket(address, dataPortNumber);
+			mapOutputStream = new ObjectOutputStream(dataSocket.getOutputStream());
+			in2 = new BufferedInputStream(dataSocket.getInputStream(), 8096);
+			out = new BufferedOutputStream(dataSocket.getOutputStream(),8096);
+			// info
+			System.out.println("Client Address : " + address);
+			System.out.println("Enter Data to echo Server ( Enter QUIT to end):");
+			for(int i = 0; i < accessKeys.size() ; i++){
+				clientBase = base + accessKeys.get(i)+"/";
+				syncAll(accessKeys.get(i)+"/");
+			}
+		
+			break;
+		} catch (Exception e) {
+			//e.printStackTrace();
+			//System.out.println("Socket read Error");
+		} }
 	
 			is.close();
 			os.close();

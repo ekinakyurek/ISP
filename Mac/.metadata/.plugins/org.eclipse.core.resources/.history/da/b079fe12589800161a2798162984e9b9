@@ -34,7 +34,7 @@ public class Client {
 	public static void main(String args[]) throws Exception {
 		  clientKey = "50urdi6qonscr869hq6hl11dsb";
 		 address= InetAddress.getByName("172.20.10.8"); // for local use server ip is client ip								
-		 address = InetAddress.getLocalHost();
+		 //address = InetAddress.getLocalHost();
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null; 
 	while(true){
 		try {	
