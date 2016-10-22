@@ -142,7 +142,7 @@ class DroneThread extends Thread {
 				} else if (line.compareTo("sync all") == 0) {
 					clientBase = is.readLine();
 					clientBase = Server.base + clientBase;
-					System.out.println(clientBase+"base");
+					System.out.println(clientBase);
 					syncAll();
 
 				} else if (line.substring(0, 4).compareTo("sync") == 0) {
@@ -288,7 +288,7 @@ class DroneThread extends Thread {
 		
 		final Map<String,Long> lastEdits = (Map<String,Long>) mapInputStream.readObject();
 		// System.out.println(yourMap.get("Presentation1.pptx"));
-		System.out.println("heyy");
+	
 		HashMap<String, String> serverFiles = hashAllFiles();
 		HashMap<String, Long > serverLastEdits = lastEdits();
 		long updateSize = 0;
