@@ -38,13 +38,13 @@ public class DroneForServer{
 	private static int dataPortNumber; // port number for data socket
 	
 	public static ArrayList<String> accessKeys;
-	public static String base = "../Storage/";
+	public static String base = "./Storage/";
 	public static String clientBase;
 	
 	public static void main(String args[]) throws Exception {
 		 
 		// initialization of variables
-		 address= InetAddress.getByName("172.20.10.4"); // for local use server ip is client ip								
+		 address= InetAddress.getLocalHost(); // for local use server ip is client ip								
 		 s = null; dataSocket = null; line = null; br = null; is = null; os = null; mapOutputStream = null; in2= null;
 		 out = null;
 		 accessKeys =new ArrayList<String>();
@@ -98,7 +98,7 @@ public class DroneForServer{
 	}
 
 	public static void readKeysAndCreateFolders() throws IOException{
-		File keyfile = new File("../ServerKeys.txt");
+		File keyfile = new File("./ServerKeys.txt");
 		Scanner sc = new Scanner(keyfile);
 	    while (sc.hasNextLine()) {
 	            accessKeys.add(sc.next());        
@@ -242,7 +242,7 @@ public class DroneForServer{
 					getFile(fileName).delete();
 					System.out.println(fileName + " deleted");
 				} else if (operation.compareTo("add") == 0) {
-					File thisfile = new File(base + clientbase + fileName);
+					File thisfile = new File(base + fileName);
 
 					FileOutputStream inFile = new FileOutputStream(thisfile);
 					byte[] bytes = new byte[8096];
@@ -391,6 +391,27 @@ public class DroneForServer{
 	
 
 
+	private static boolean sendFile(File thisFile) throws IOException, ClassNotFoundException {
+		
+		FileInputStream in = new FileInputStream(thisFile);
+		byte[] bytes = new byte[8096];
+		int count;
+		while ((count = in.read(bytes)) > 0) {
+			out.write(bytes, 0, count);
+			out.flush();
+		}
+		// out.close();
+		line = is.readLine();
+		in.close();
+
+		if (line.compareTo("done") == 0) {
+			return true;
+		} else {
+			return false;
+		}
+
+		// System.out.println("Bytes Sent :" + bytecount);
+	}
 
 	public static String getHash(String filename) throws Exception {
 
@@ -442,7 +463,18 @@ public class DroneForServer{
 		}
 		return ServerFiles;
 	}
-
+	public static HashMap<String,Long> lastEdits() throws Exception {
+	
+		File folder = new File(clientBase);
+		File[] listOfFiles = folder.listFiles();
+		
+		HashMap<String, Long>filesLastEdits = new HashMap<String,Long>();
+		for (int i = 0; i < listOfFiles.length; i++) {
+			filesLastEdits.put(listOfFiles[i].getName(),listOfFiles[i].lastModified());
+		}
+		
+		return filesLastEdits;
+	}
 
 	public static String checkSum(String path) {
 		String digest = "";
@@ -478,7 +510,7 @@ public class DroneForServer{
 
 	private static final String[] Q = new String[] { "Bytes", "Kb", "Mb", "Gb", "T", "P", "E" };
 
-	public static String getAsString(long bytes) {
+	public String getAsString(long bytes) {
 		for (int i = 6; i >= 0; i--) {
 			double step = Math.pow(1024, i);
 
@@ -492,5 +524,4 @@ public class DroneForServer{
 		return Long.toString(bytes);
 	}
 }
-
 

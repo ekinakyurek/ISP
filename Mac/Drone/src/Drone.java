@@ -57,7 +57,7 @@ public class Drone {
 			readKeysAndCreateFolders();
 			ss = new ServerSocket(4445); // can also use static final PORT_NUM	when define
 			int clientId = 1; 
-			while (true) {
+	//		while (true) {
 				try {
 					s = ss.accept();
 					System.out.println("Connection established for client: " + clientId);
@@ -75,9 +75,9 @@ public class Drone {
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.out.println("Connection Error");
-					break;
+					//break;
 				}
-			}
+		//	}
 			
 			s.close();
 			ss.close();

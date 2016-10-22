@@ -19,7 +19,7 @@ import java.math.BigInteger;
 public class DroneAsServer {
 	public static int totalClient = 10;
 	public static ArrayList<String> accessKeys = new ArrayList<String>();
-	public static String base = "../Storage/";
+	public static String base = "./Storage/";
 	
 	public static void main(String args[]) {
 		Socket s = null;
@@ -29,7 +29,7 @@ public class DroneAsServer {
 			readKeysAndCreateFolders();
 			ss = new ServerSocket(4445); // can also use static final PORT_NUM	when define
 			int clientId = 1; // it will be client ID
-			//while (true) {
+			while (true) {
 				try {
 					s = ss.accept();
 					System.out.println("Connection established for client: " + clientId);
@@ -41,8 +41,6 @@ public class DroneAsServer {
 						if(accessKeys.contains(clientKey)){
 							DroneServerThread st = new DroneServerThread(s, clientId,is,clientKey);
 							st.start();
-							while(st.isAlive()){
-							}
 						}else{
 							
 						}
@@ -54,9 +52,9 @@ public class DroneAsServer {
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.out.println("Connection Error");
-					//break;
+					break;
 				}
-			//}
+			}
 			
 			s.close();
 			ss.close();
@@ -82,7 +80,7 @@ public class DroneAsServer {
 	}
 	
 	public static void readKeysAndCreateFolders() throws IOException{
-		File keyfile = new File("../ServerKeys.txt");
+		File keyfile = new File("./ServerKeys.txt");
 		Scanner sc = new Scanner(keyfile);
 	    while (sc.hasNextLine()) {
 	            accessKeys.add(sc.next());        
