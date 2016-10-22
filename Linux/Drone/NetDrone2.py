@@ -22,8 +22,8 @@ while(not foundClient):
     for i in range (0,len(ssids)):
         if (ssids[i] == clientSSID):
             print("In the WiFi field of " + clientSSID)
-                foundClient = True
-                    break
+            foundClient = True
+            break
         ssids = [cell.ssid for cell in Cell.all('wlan0')]
 
 print "Connecting to " + clientSSID
@@ -55,8 +55,8 @@ while(not foundServer):
     for i in range (0,len(ssids)):
         if (ssids[i] == serverSSID):
             print("In the WiFi field of " + serverSSID)
-                foundServer = True
-                    break
+            foundServer = True
+            break
         ssids = [cell.ssid for cell in Cell.all('wlan0')]
 
 print "Connecting to " + serverSSID
@@ -80,9 +80,9 @@ while(not foundClient):
     for i in range (0,len(ssids)):
         if (ssids[i] == clientSSID):
             print("In the WiFi field of " + clientSSID)
-                foundClient = True
-                    break
-	ssids = [cell.ssid for cell in Cell.all('wlan0')]
+            foundClient = True
+            break
+        ssids = [cell.ssid for cell in Cell.all('wlan0')]
 
 print "Connecting to " + clientSSID
 wireless = Wireless()
